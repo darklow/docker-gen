@@ -569,7 +569,8 @@ func (g *generator) getContainersFromSwarm() ([]*RuntimeContainer, error) {
 		}
 
 		runtimeContainer.Env = splitKeyValueSlice(container.Spec.ContainerSpec.Env)
-		runtimeContainer.Labels = container.Spec.ContainerSpec.Labels
+// 		runtimeContainer.Labels = container.Spec.ContainerSpec.Labels
+		runtimeContainer.Labels = container.Config.Labels
 		containers = append(containers, runtimeContainer)
 	}
 	return containers, nil
@@ -662,6 +663,7 @@ func (g *generator) getContainersFromLocalDocker() ([]*RuntimeContainer, error) 
 			runtimeContainer.Node.Address = Address{
 				IP: container.Node.IP,
 			}
+			runtimeContainer.Node.Labels = container.Node.Labels
 		}
 
 		for _, v := range container.Mounts {

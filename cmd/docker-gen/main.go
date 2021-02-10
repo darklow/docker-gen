@@ -106,7 +106,7 @@ func initFlags() {
 	flag.StringVar(&tlsKey, "tlskey", filepath.Join(certPath, "key.pem"), "path to TLS client key file")
 	flag.StringVar(&tlsCaCert, "tlscacert", filepath.Join(certPath, "ca.pem"), "path to TLS CA certificate file")
 	flag.BoolVar(&tlsVerify, "tlsverify", os.Getenv("DOCKER_TLS_VERIFY") != "", "verify docker daemon's TLS certicate")
-	flag.BoolVar(&swarm, "swarm", false,
+	flag.BoolVar(&swarm, "swarm", true,
   		"extract container information from tasks not containers. When endpoint points to swarm manager it will list all containers in whole swarm, not only running on node pointed by endpoint")
 
 	flag.Usage = usage

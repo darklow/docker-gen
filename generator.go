@@ -442,7 +442,18 @@ func (g *generator) getContainersFromSwarm() ([]*RuntimeContainer, error) {
 			log.Printf("Error inspecting Node: %s: %s\n", container.NodeID, err)
 			continue
 		}
-		registry, repository, tag := splitDockerImage(container.Spec.ContainerSpec.Image)
+
+		if container.Spec == nil || container.Spec.ContainerSpec == nil || container.Spec.ContainerSpec.Image == nil {
+		  log.Printf("Error inspecting container.Spec")
+      continue
+		}
+		log.Printf("-->>>> ContainerSpec: %s", container.Spec)
+
+		registry, repository, tag, err := splitDockerImage(container.Spec.ContainerSpec.Image)
+		if err != nil {
+      log.Printf("Error at splitDockerImage(container.Spec.ContainerSpec.Image) at: %s: %s\n", container.NodeID, err)
+      continue
+    }
 		runtimeContainer := &RuntimeContainer{
 			ID: container.Status.ContainerStatus.ContainerID,
 			Image: DockerImage{
@@ -523,7 +534,7 @@ func (g *generator) getContainersFromSwarm() ([]*RuntimeContainer, error) {
 				network)
 		}
 		if len(runtimeContainer.Addresses) == 0 {
-			//we havent found any ports so we look them in image
+			//we haven't found any ports so we look them in image
 			image, err := imageCache.getImage(g.Client, container.Spec.ContainerSpec.Image)
 			if err == nil && len(image.Config.ExposedPorts) > 0 {
 				for _, net := range container.NetworksAttachments {
